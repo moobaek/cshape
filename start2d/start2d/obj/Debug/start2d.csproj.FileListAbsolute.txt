@@ -1,0 +1,7 @@
+C:\Users\82105\Desktop\C#codeex\start2d\start2d\bin\Debug\start2d.exe.config
+C:\Users\82105\Desktop\C#codeex\start2d\start2d\bin\Debug\start2d.exe
+C:\Users\82105\Desktop\C#codeex\start2d\start2d\bin\Debug\start2d.pdb
+C:\Users\82105\Desktop\C#codeex\start2d\start2d\obj\Debug\start2d.csprojAssemblyReference.cache
+C:\Users\82105\Desktop\C#codeex\start2d\start2d\obj\Debug\start2d.csproj.CoreCompileInputs.cache
+C:\Users\82105\Desktop\C#codeex\start2d\start2d\obj\Debug\start2d.exe
+C:\Users\82105\Desktop\C#codeex\start2d\start2d\obj\Debug\start2d.pdb
