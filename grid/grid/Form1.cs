@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
+using System.Drawing.Text;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
@@ -16,11 +17,14 @@ namespace grid
 
     public partial class Form1 : Form
     {
-      
-       
-            MySqlConnection connection =
-            new MySqlConnection("Server=127.0.0.1;Port=3306;Database=board;Uid=root;Pwd=root;allow user variables=true");
-        public static string constring1 = @"Data Source=127.0.0.1;Initial Catalog=board;Persist Security Info=True;User ID=root;Password=root;allow user variables=true";
+
+
+        
+
+
+        MySqlConnection connection =
+            new MySqlConnection("Server=127.0.0.1;Port=3306;Database=board;Uid=root;Pwd=root;allow user variables=true;CharSet=utf8;");
+        public static string constring1 = @"Data Source=127.0.0.1;Initial Catalog=board;Persist Security Info=True;User ID=root;Password=root;allow user variables=true;CharSet=utf8;";
 
         MySqlConnection conn = new MySqlConnection();
         private string sConnString = "";
@@ -70,6 +74,7 @@ namespace grid
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            label3.Text = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
             DataTable ds = GetData();
 
             dataGridView1.DataSource = ds;
@@ -100,27 +105,147 @@ namespace grid
         private void button1_Click(object sender, EventArgs e) ///추가 INSERT  user_id, user_password, user_name, user_regdate ) VALUES ( 'test_id', 'testpwd', '홍길동', getdate() )
 
         {
-            string query = $"INSERT INTO post(mnum, word, fword,title, id, time) VALUES ( 'one', 'two', 'three','four','five', getdate() )";
 
-            //여기서는 삽입 쿼리문을 넣으면 될듯 (앞에 명령은 그대로 뒤에 값을 바꿔주면됨. 삽입값음. 일단은 빈칸에 넣고 
+            this.Cursor = Cursors.WaitCursor;
 
-            ConnectDB();
+            DataTable dtChanges = new DataTable();
+
+            DataTable dtSTUDENT = (DataTable)dataGridView1.DataSource;
+
+            dtChanges = dtSTUDENT.GetChanges(DataRowState.Modified);
+            string mnum_m = this.dataGridView1.CurrentRow.Cells[0].Value.ToString();
+            string fword_m = this.dataGridView1.CurrentRow.Cells[1].Value.ToString();
+            string title_m = this.dataGridView1.CurrentRow.Cells[2].Value.ToString();
+            string id_m = this.dataGridView1.CurrentRow.Cells[3].Value.ToString();
+            string time_m = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+            
+
+            label3.Text = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+
+          
+
+            string insert_query = $"INSERT INTO post(mnum, fword, title, id, time) VALUES('{mnum_m}','{fword_m}','{title_m}','{id_m}','{label3.Text}')";
+            //MySqlCommand command = new MySqlCommand(query, connection);
+            /*MySqlDataAdapter adapter = new MySqlDataAdapter(
+                "INSERT INTO post(mnum, fword, title, id, time) VALUES('{mnum_m}','{fword_m }','{title_m}','{id_m}','{time_m}')"
+                , sConnString);*/
+            /////
+            ///
+            connection.Open();
+            MySqlCommand command = new MySqlCommand(insert_query, connection);
+
+            try//확인용
+            {
+
+                if (command.ExecuteNonQuery() == 1)
+                {
+                    MessageBox.Show("작성완료");
+                }
+                else
+                {
+                    MessageBox.Show("오류가 발생하였습니다.");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
+
+            connection.Close();
+
+
+
+
+
+            // MySql.Data.MySqlClient.MySqlCommand myCommand = new MySql.Data.MySqlClient.MySqlCommand(query, connection);
+
+            DataTable ds = GetData();
+
+            dataGridView1.DataSource = ds;
+            
+
+
 
 
             //그리드에 뿌려주면됨.
 
-
             CloseDB();
         }
 
-        private void button2_Click(object sender, EventArgs e) //수정 UPDATE member_table SET user_name='김철수' WHERE user_id = 'test_id'
+        private void button2_Click(object sender, EventArgs e) //수정 UPDATE member_table SET user_name='김철수'  WHERE mnum = '{mnum_d}'
 
         {
-            string query = $"INSERT INTO post(mnum, word, fword,title, id, time) VALUES('{label2.Text}','{textBox1.Text}',{label1.Text})";
-            //
-            ConnectDB();
 
 
+            //MySqlDataAdapter adapter = new MySqlDataAdapter("UPDATE board SET post = '"+mnum_m+"', '"+fword_m+ "','"+title_m+"','" + id_m + "','" + title_m+"'" , sConnString);
+
+
+
+
+            this.Cursor = Cursors.WaitCursor;
+
+            DataTable dtChanges = new DataTable();
+
+            DataTable dtSTUDENT = (DataTable)dataGridView1.DataSource;
+
+            dtChanges = dtSTUDENT.GetChanges(DataRowState.Modified);
+            string mnum_m = this.dataGridView1.CurrentRow.Cells[0].Value.ToString();
+            string fword_m = this.dataGridView1.CurrentRow.Cells[1].Value.ToString();
+            string title_m = this.dataGridView1.CurrentRow.Cells[2].Value.ToString();
+            string id_m = this.dataGridView1.CurrentRow.Cells[3].Value.ToString();
+            string time_m = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+
+
+            label3.Text = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+
+
+
+            string modi_query = $"UPDATE board.post SET fword='{fword_m}', title='{title_m}', time='{time_m}' WHERE mnum = '{mnum_m}'";
+            //MySqlCommand command = new MySqlCommand(query, connection);
+            /*MySqlDataAdapter adapter = new MySqlDataAdapter(
+                "INSERT INTO post(mnum, fword, title, id, time) VALUES('{mnum_m}','{fword_m }','{title_m}','{id_m}','{time_m}')"
+                , sConnString);*/
+            /////
+            ///
+            connection.Open();
+            MySqlCommand command = new MySqlCommand(modi_query, connection);
+
+            try//확인용
+            {
+
+                if (command.ExecuteNonQuery() == 1)
+                {
+                    MessageBox.Show("수정완료");
+                }
+                else
+                {
+                    MessageBox.Show("오류가 발생하였습니다.");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
+
+            connection.Close();
+
+
+
+
+
+            // MySql.Data.MySqlClient.MySqlCommand myCommand = new MySql.Data.MySqlClient.MySqlCommand(query, connection);
+
+            DataTable ds = GetData();
+
+            dataGridView1.DataSource = ds;
+
+
+
+
+
+            //그리드에 뿌려주면됨.
 
             CloseDB();
         }
@@ -128,16 +253,116 @@ namespace grid
         private void button3_Click(object sender, EventArgs e)    //삭제 DELETE FROM member_table WHERE user_id='test_id'
         {
             ConnectDB();
+            this.Cursor = Cursors.WaitCursor;
+
+            DataTable dtChanges = new DataTable();
+
+            DataTable dtSTUDENT = (DataTable)dataGridView1.DataSource;
+
+            dtChanges = dtSTUDENT.GetChanges(DataRowState.Modified);
+            string mnum_d = this.dataGridView1.CurrentRow.Cells[0].Value.ToString();
+            label3.Text = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
 
 
+
+            string del_query = $"DELETE FROM board.post WHERE mnum = '{mnum_d}'";
+            //MySqlCommand command = new MySqlCommand(query, connection);
+            /*MySqlDataAdapter adapter = new MySqlDataAdapter(
+                "INSERT INTO post(mnum, fword, title, id, time) VALUES('{mnum_m}','{fword_m }','{title_m}','{id_m}','{time_m}')"
+                , sConnString);*/
+            /////
+            ///
+            connection.Open();
+            MySqlCommand command = new MySqlCommand(del_query, connection);
+
+            try//확인용
+            {
+
+                if (command.ExecuteNonQuery() == 1)
+                {
+                    MessageBox.Show("삭제완료");
+                }
+                else
+                {
+                    MessageBox.Show("오류가 발생하였습니다.");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
+
+            connection.Close();
+
+
+
+
+
+            // MySql.Data.MySqlClient.MySqlCommand myCommand = new MySql.Data.MySqlClient.MySqlCommand(query, connection);
+
+            DataTable ds = GetData();
+
+            dataGridView1.DataSource = ds;
+
+
+
+
+
+            //그리드에 뿌려주면됨.
 
             CloseDB();
+
+
         }
 
-        private void button4_Click(object sender, EventArgs e)//조회 SELECT user_id, user_name, FROM member_table
+        private void button4_Click(object sender, EventArgs e)//조회 SELECT user_id, user_name, FROM board.post
         {
             ConnectDB();
+            this.Cursor = Cursors.WaitCursor;
 
+            DataTable dtChanges = new DataTable();
+
+            DataTable dtSTUDENT = (DataTable)dataGridView1.DataSource;
+
+          
+
+            dtChanges = dtSTUDENT.GetChanges(DataRowState.Modified);
+            string mnum_m = this.dataGridView1.CurrentRow.Cells[0].Value.ToString();
+            string fword_m = this.dataGridView1.CurrentRow.Cells[1].Value.ToString();
+            string title_m = this.dataGridView1.CurrentRow.Cells[2].Value.ToString();
+            string id_m = this.dataGridView1.CurrentRow.Cells[3].Value.ToString();
+            string time_m = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+
+
+            label3.Text = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+
+
+
+            string sel_query = $"SELECT * FROM board.post";
+            //MySqlCommand command = new MySqlCommand(query, connection);
+            /*MySqlDataAdapter adapter = new MySqlDataAdapter(
+                "INSERT INTO post(mnum, fword, title, id, time) VALUES('{mnum_m}','{fword_m }','{title_m}','{id_m}','{time_m}')"
+                , sConnString);*/
+            /////
+            ///
+            connection.Open();
+
+            DataTable ds = GetData();
+
+            //dataGridView2.DataSource = ds;
+
+            connection.Close();
+
+
+
+
+
+            // MySql.Data.MySqlClient.MySqlCommand myCommand = new MySql.Data.MySqlClient.MySqlCommand(query, connection);
+
+           
+
+            //그리드에 뿌려주면됨.
 
 
             CloseDB();
